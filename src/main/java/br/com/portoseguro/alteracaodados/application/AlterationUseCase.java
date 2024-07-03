@@ -1,4 +1,9 @@
-package br.com.portoseguro.alteracaodados;
+package br.com.portoseguro.alteracaodados.application;
+
+import br.com.portoseguro.alteracaodados.domain.Entity.User;
+import br.com.portoseguro.alteracaodados.domain.vo.StateFactory;
+import br.com.portoseguro.alteracaodados.domain.vo.StateToken;
+import br.com.portoseguro.alteracaodados.infrastructure.gateway.UserGateway;
 
 import java.util.Map;
 
@@ -29,12 +34,12 @@ public class AlterationUseCase {
         OutputState outputState = currentState.execute(inputState);
         StateToken nextStateToken = stateToken.nextState();
 
-        return new AlterationUseCaseOutput(outputState.getState(), nextStateToken.getValue(), outputState.getMetadata());
+        return new AlterationUseCaseOutput(outputState.getState(), nextStateToken.currentState(), nextStateToken.getValue(), outputState.getMetadata());
     }
 
     public record AlterationUseCaseInput(String cpf, String token, Map<String, Object> metadata) {
     }
 
-    public record AlterationUseCaseOutput(String state, String token, Map<String, Object> metadata) {
+    public record AlterationUseCaseOutput(String state, String nextState, String token, Map<String, Object> metadata) {
     }
 }

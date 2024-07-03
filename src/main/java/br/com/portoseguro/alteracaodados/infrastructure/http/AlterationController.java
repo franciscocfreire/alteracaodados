@@ -1,5 +1,7 @@
-package br.com.portoseguro.alteracaodados;
+package br.com.portoseguro.alteracaodados.infrastructure.http;
 
+import br.com.portoseguro.alteracaodados.application.AlterationUseCase;
+import br.com.portoseguro.alteracaodados.infrastructure.gateway.UserGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +31,7 @@ public class AlterationController {
 
         Map<String, Object> response = new HashMap<>();
         response.put("state", output.state());
+        response.put("nextState", output.nextState());
         response.put("token", output.token());
         response.put("metadata", output.metadata());
 

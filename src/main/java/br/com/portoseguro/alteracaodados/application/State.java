@@ -1,4 +1,4 @@
-package br.com.portoseguro.alteracaodados;
+package br.com.portoseguro.alteracaodados.application;
 
 public interface State {
 

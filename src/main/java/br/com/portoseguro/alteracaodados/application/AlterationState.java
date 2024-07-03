@@ -1,22 +1,24 @@
-package br.com.portoseguro.alteracaodados;
+package br.com.portoseguro.alteracaodados.application;
+
+import br.com.portoseguro.alteracaodados.domain.Entity.User;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class InitialState implements State {
+public class AlterationState implements State {
 
     private final User user;
-    private final String STATE_NAME = "INITIAL";
+    private final String STATE_NAME = "ALTERATION";
 
-    public InitialState(User user) {
+    public AlterationState(User user) {
         this.user = user;
     }
 
     @Override
     public OutputState execute(InputState inputState) {
         Map<String, Object> metadata = new HashMap<>();
-        metadata.put("email", user.getMaskedEmail());
-        metadata.put("phone", user.getMaskedPhone());
+        metadata.put("message", "access data were change");
+        metadata.put("result", "PASSED");
         OutputState outputState = new OutputState();
         outputState.setState(STATE_NAME);
         outputState.setMetadata(metadata);

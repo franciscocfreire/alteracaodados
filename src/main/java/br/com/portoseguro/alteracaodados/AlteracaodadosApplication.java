@@ -1,5 +1,7 @@
 package br.com.portoseguro.alteracaodados;
 
+import br.com.portoseguro.alteracaodados.domain.vo.StateToken;
+import br.com.portoseguro.alteracaodados.infrastructure.config.JwtConfig;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

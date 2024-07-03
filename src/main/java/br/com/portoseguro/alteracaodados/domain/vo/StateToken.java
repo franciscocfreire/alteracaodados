@@ -1,5 +1,6 @@
-package br.com.portoseguro.alteracaodados;
+package br.com.portoseguro.alteracaodados.domain.vo;
 
+import br.com.portoseguro.alteracaodados.domain.exceptions.ValidationError;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.Getter;
@@ -25,10 +26,16 @@ public class StateToken {
     public StateToken nextState() {
         return switch (this.currentState()) {
             case "initial" -> new StateToken(generateToken("biometric"));
-            case "biometric" -> new StateToken(generateToken("last"));
-            case "last" -> new StateToken(generateToken("done"));
+            case "biometric" -> new StateToken(generateToken("authenticator"));
+            case "authenticator" -> new StateToken(generateToken("alteration"));
+            case "alteration" -> new StateToken(generateToken("done"));
             default -> throw new ValidationError("State is not valid", -2);
         };
+    }
+
+    public String getValue(){
+        if(currentState().equals("done")) return null;
+        return this.value;
     }
 
     private boolean isValid() {

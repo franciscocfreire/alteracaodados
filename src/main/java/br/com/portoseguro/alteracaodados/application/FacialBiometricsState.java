@@ -1,14 +1,16 @@
-package br.com.portoseguro.alteracaodados;
+package br.com.portoseguro.alteracaodados.application;
+
+import br.com.portoseguro.alteracaodados.domain.Entity.User;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class BiometricState implements State{
+public class FacialBiometricsState implements State {
 
     private final User user;
     private final String STATE_NAME = "BIOMETRIC";
 
-    public BiometricState(User user) {
+    public FacialBiometricsState(User user) {
         this.user = user;
     }
 

@@ -1,5 +1,9 @@
 package br.com.portoseguro.alteracaodados;
 
+import br.com.portoseguro.alteracaodados.application.AlterationUseCase;
+import br.com.portoseguro.alteracaodados.domain.Entity.User;
+import br.com.portoseguro.alteracaodados.domain.vo.StateToken;
+import br.com.portoseguro.alteracaodados.infrastructure.gateway.UserGateway;
 import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,7 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.crypto.SecretKey;
 import java.util.Base64;
 
-import static br.com.portoseguro.alteracaodados.AlterationUseCase.AlterationUseCaseInput;
+import static br.com.portoseguro.alteracaodados.application.AlterationUseCase.AlterationUseCaseInput;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;

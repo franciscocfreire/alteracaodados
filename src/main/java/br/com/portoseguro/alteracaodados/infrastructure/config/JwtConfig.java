@@ -1,4 +1,4 @@
-package br.com.portoseguro.alteracaodados;
+package br.com.portoseguro.alteracaodados.infrastructure.config;
 
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
