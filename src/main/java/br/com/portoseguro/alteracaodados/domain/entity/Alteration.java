@@ -27,7 +27,7 @@ public class Alteration {
         return new Alteration(user, state);
     }
 
-    public OutputState execute(InputState inputState) {
+    public State.OutputState execute(State.InputState inputState) {
         return switch (this.getState()) {
             case "initial" -> this.initial(inputState);
             case "facialBiometric" -> this.facialBiometric(inputState);
@@ -54,19 +54,19 @@ public class Alteration {
         return state.getToken().getValue();
     }
 
-    public OutputState initial(InputState initialState) {
+    public State.OutputState initial(State.InputState initialState) {
         return new InitialState(this).initial(initialState);
     }
 
-    public OutputState facialBiometric(InputState initialState) {
+    public State.OutputState facialBiometric(State.InputState initialState) {
         return new FacialBiometricsState(this).facialBiometric(initialState);
     }
 
-    public OutputState authenticator(InputState initialState) {
+    public State.OutputState authenticator(State.InputState initialState) {
         return new AuthenticatorState(this).authenticator(initialState);
     }
 
-    public OutputState changeData(InputState initialState) {
+    public State.OutputState changeData(State.InputState initialState) {
         return new AlterationState(this).changeData(initialState);
     }
 }

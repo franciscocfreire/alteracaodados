@@ -3,9 +3,8 @@ package br.com.portoseguro.alteracaodados.application;
 import br.com.portoseguro.alteracaodados.domain.entity.Alteration;
 import br.com.portoseguro.alteracaodados.domain.entity.User;
 import br.com.portoseguro.alteracaodados.domain.exceptions.ValidationError;
-import br.com.portoseguro.alteracaodados.domain.vo.InputState;
-import br.com.portoseguro.alteracaodados.domain.vo.OutputState;
 import br.com.portoseguro.alteracaodados.domain.vo.PersistenceToken;
+import br.com.portoseguro.alteracaodados.domain.vo.State;
 import br.com.portoseguro.alteracaodados.infrastructure.gateway.UserGateway;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
@@ -40,11 +39,10 @@ public class AlterationUseCase {
             }
         }
 
-        InputState inputState = new InputState();
-        inputState.setMetadata(alterationUseCaseInput.metadata);
-        OutputState outputState = alteration.execute(inputState);
+        State.InputState inputState = new State.InputState(null,alterationUseCaseInput.metadata);
+        State.OutputState outputState = alteration.execute(inputState);
 
-        return new AlterationUseCaseOutput(alteration.getState(), alteration.getNextStage(), alteration.getToken(), outputState.getMetadata());
+        return new AlterationUseCaseOutput(alteration.getState(), alteration.getNextStage(), alteration.getToken(), outputState.metadata());
     }
 
     public record AlterationUseCaseInput(String cpf, String token, Map<String, Object> metadata) {

@@ -5,6 +5,7 @@ import br.com.portoseguro.alteracaodados.domain.exceptions.ValidationError;
 import lombok.Getter;
 
 import java.util.Date;
+import java.util.Map;
 
 public abstract class State {
 
@@ -17,7 +18,7 @@ public abstract class State {
     State(Alteration alteration, String value) {
         this.alteration = alteration;
         this.value = value;
-        this.token = PersistenceToken.restore(this.value, getNextStage(), new Date());
+        this.token = PersistenceToken.restore(alteration.getUser().getCpf(),this.value, getNextStage(), new Date());
     }
 
     public String getNextStage() {
@@ -34,4 +35,7 @@ public abstract class State {
     public abstract OutputState facialBiometric(InputState inputState);
     public abstract OutputState authenticator(InputState inputState);
     public abstract OutputState changeData(InputState inputState);
+
+    public record InputState(String token, Map<String, Object> metadata){}
+    public record OutputState(String state, Map<String, Object> metadata){}
 }
