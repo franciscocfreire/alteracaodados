@@ -1,20 +1,26 @@
 package br.com.portoseguro.alteracaodados.domain.vo;
 
-import br.com.portoseguro.alteracaodados.application.State;
-import br.com.portoseguro.alteracaodados.domain.Entity.User;
-import br.com.portoseguro.alteracaodados.application.AlterationState;
-import br.com.portoseguro.alteracaodados.application.AuthenticatorState;
-import br.com.portoseguro.alteracaodados.application.FacialBiometricsState;
-import br.com.portoseguro.alteracaodados.application.InitialState;
+import br.com.portoseguro.alteracaodados.application.*;
+import br.com.portoseguro.alteracaodados.domain.entity.Alteration;
 
 public class StateFactory {
-    public static State create(StateToken stateToken, User user) {
-        return switch (stateToken.currentState()) {
-            case "initial" -> new InitialState(user);
-            case "biometric" -> new FacialBiometricsState(user);
-            case "authenticator" -> new AuthenticatorState(user);
-            case "alteration" -> new AlterationState(user);
-            default -> throw new IllegalArgumentException("Unknown state: " + stateToken.currentState());
+    public static State create(Alteration alteration, String state) {
+        return switch (state) {
+            case "initial" -> new InitialState(alteration);
+            case "facialBiometric" -> new FacialBiometricsState(alteration);
+            case "authenticator" -> new AuthenticatorState(alteration);
+            case "changeData" -> new AlterationState(alteration);
+            default -> throw new IllegalArgumentException("Unknown state: " + alteration.getState());
+        };
+    }
+
+    public static State nextState(Alteration alteration) {
+        return switch (alteration.getState()) {
+            case "initial" -> new FacialBiometricsState(alteration);
+            case "facialBiometric" -> new AuthenticatorState(alteration);
+            case "authenticator" -> new AlterationState(alteration);
+            case "changeData" -> throw new IllegalArgumentException("Invalide state: " + alteration.getState());
+            default -> throw new IllegalArgumentException("Unknown state: " + alteration.getState());
         };
     }
 }

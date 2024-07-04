@@ -23,18 +23,9 @@ public class StateToken {
         if (!this.isValid()) throw new ValidationError("Token is not valid", -1);
     }
 
-    public StateToken nextState() {
-        return switch (this.currentState()) {
-            case "initial" -> new StateToken(generateToken("biometric"));
-            case "biometric" -> new StateToken(generateToken("authenticator"));
-            case "authenticator" -> new StateToken(generateToken("alteration"));
-            case "alteration" -> new StateToken(generateToken("done"));
-            default -> throw new ValidationError("State is not valid", -2);
-        };
-    }
 
-    public String getValue(){
-        if(currentState().equals("done")) return null;
+    public String getValue() {
+        if (getCurrentState().equals("done")) return null;
         return this.value;
     }
 
@@ -47,7 +38,7 @@ public class StateToken {
         }
     }
 
-    public String currentState() {
+    public String getCurrentState() {
         Claims claims = Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(value).getBody();
         return claims.get("state", String.class);
     }
@@ -56,9 +47,12 @@ public class StateToken {
         return new StateToken(generateToken("initial"));
     }
 
+    public static StateToken restoreByState(String state) {
+        return new StateToken(generateToken(state));
+    }
 
-    public static StateToken restore(String value) {
-        return new StateToken(value);
+    public static StateToken restoreByToken(String token) {
+        return new StateToken(token);
     }
 
     private static String generateToken(String state) {

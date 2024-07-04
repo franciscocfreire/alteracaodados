@@ -1,27 +1,42 @@
 package br.com.portoseguro.alteracaodados.application;
 
-import br.com.portoseguro.alteracaodados.domain.Entity.User;
+import br.com.portoseguro.alteracaodados.domain.entity.Alteration;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class InitialState implements State {
+public class InitialState extends State {
 
-    private final User user;
-    private final String STATE_NAME = "INITIAL";
 
-    public InitialState(User user) {
-        this.user = user;
+    public InitialState(Alteration alteration) {
+        super(alteration, "initial");
     }
 
     @Override
-    public OutputState execute(InputState inputState) {
+    public OutputState initial(InputState inputState) {
         Map<String, Object> metadata = new HashMap<>();
-        metadata.put("email", user.getMaskedEmail());
-        metadata.put("phone", user.getMaskedPhone());
+        metadata.put("email", this.alteration.getUser().getMaskedEmail());
+        metadata.put("phone", this.alteration.getUser().getMaskedPhone());
         OutputState outputState = new OutputState();
-        outputState.setState(STATE_NAME);
+        outputState.setState(this.value);
         outputState.setMetadata(metadata);
         return outputState;
     }
+
+    @Override
+    public OutputState facialBiometric(InputState inputState) {
+        return null;
+    }
+
+    @Override
+    public OutputState authenticator(InputState inputState) {
+        return null;
+    }
+
+    @Override
+    public OutputState changeData(InputState inputState) {
+        return null;
+    }
+
+
 }

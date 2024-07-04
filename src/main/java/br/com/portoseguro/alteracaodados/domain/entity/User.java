@@ -1,4 +1,4 @@
-package br.com.portoseguro.alteracaodados.domain.Entity;
+package br.com.portoseguro.alteracaodados.domain.entity;
 
 import lombok.Getter;
 

@@ -1,6 +1,6 @@
 package br.com.portoseguro.alteracaodados.infrastructure.gateway;
 
-import br.com.portoseguro.alteracaodados.domain.Entity.User;
+import br.com.portoseguro.alteracaodados.domain.entity.User;
 import org.springframework.stereotype.Component;
 
 @Component

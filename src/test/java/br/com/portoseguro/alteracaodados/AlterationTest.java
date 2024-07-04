@@ -1,7 +1,7 @@
 package br.com.portoseguro.alteracaodados;
 
-import br.com.portoseguro.alteracaodados.application.AlterationUseCase;
-import br.com.portoseguro.alteracaodados.domain.Entity.User;
+import br.com.portoseguro.alteracaodados.domain.entity.User;
+import br.com.portoseguro.alteracaodados.domain.service.AlterationService;
 import br.com.portoseguro.alteracaodados.domain.vo.StateToken;
 import br.com.portoseguro.alteracaodados.infrastructure.gateway.UserGateway;
 import io.jsonwebtoken.security.Keys;
@@ -15,18 +15,17 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.crypto.SecretKey;
 import java.util.Base64;
 
-import static br.com.portoseguro.alteracaodados.application.AlterationUseCase.AlterationUseCaseInput;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class AlterationUseCaseTest {
+public class AlterationTest {
 
     private static final String SECRET_KEY = "MjZmNDJlYjQtMDYzZS00ZjU4LWE0NmQtOGJlMWIwMjExZDM4Cg==";
 
-    private AlterationUseCase alterationUseCase;
+    private AlterationService alterationService;
     @Mock
     private UserGateway userGateway;
     private User userMock;
@@ -37,7 +36,7 @@ public class AlterationUseCaseTest {
         StateToken.setSecretKey(key);
 
         userMock = new User("user123", "33998291830", "maskemail@gmail.com", "maskedphone");
-        alterationUseCase = new AlterationUseCase(userGateway);
+        alterationService = new AlterationService(userGateway);
     }
 
     @Test
@@ -46,13 +45,15 @@ public class AlterationUseCaseTest {
         String expectedCpf = "33998291830";
         String expectedEmail = "maskemail@gmail.com";
         String expectedPhone = "maskedphone";
-        AlterationUseCaseInput alterationUseCaseInput = new AlterationUseCaseInput(expectedCpf, null,null);
+        String expectedNextState = "facialBiometric";
+        AlterationService.AlterationUseCaseInput alterationUseCaseInput = new AlterationService.AlterationUseCaseInput(expectedCpf, null, null);
         when(userGateway.restore(eq(expectedCpf))).thenReturn(userMock);
-        var result = alterationUseCase.execute(alterationUseCaseInput);
-        assertEquals("INITIAL", result.state());
+        var result = alterationService.execute(alterationUseCaseInput);
+        assertEquals("initial", result.state());
         assertNotNull(result.token());
         assertEquals(expectedEmail, result.metadata().get("email"));
         assertEquals(expectedPhone, result.metadata().get("phone"));
+        assertEquals(expectedNextState, result.nextState());
     }
 
     @Test
@@ -61,14 +62,14 @@ public class AlterationUseCaseTest {
         String expectedCpf = "33998291830";
         String expectedScore = "90";
         String expectedResult = "PASSED";
-        AlterationUseCaseInput alterationUseCaseInput = new AlterationUseCaseInput(expectedCpf, null,null);
+        AlterationService.AlterationUseCaseInput alterationUseCaseInput = new AlterationService.AlterationUseCaseInput(expectedCpf, null, null);
         when(userGateway.restore(eq(expectedCpf))).thenReturn(userMock);
-        var resultInitial = alterationUseCase.execute(alterationUseCaseInput);
+        var resultInitial = alterationService.execute(alterationUseCaseInput);
 
-        AlterationUseCaseInput alterationUseCaseInputSecondTime = new AlterationUseCaseInput(expectedCpf, resultInitial.token(), null);
-        var resultSecondTime = alterationUseCase.execute(alterationUseCaseInputSecondTime);
+        AlterationService.AlterationUseCaseInput alterationUseCaseInputSecondTime = new AlterationService.AlterationUseCaseInput(expectedCpf, resultInitial.token(), null);
+        var resultSecondTime = alterationService.execute(alterationUseCaseInputSecondTime);
 
-        assertEquals("BIOMETRIC", resultSecondTime.state());
+        assertEquals("facialBiometric", resultSecondTime.state());
         assertNotNull(resultSecondTime.token());
         assertEquals(expectedScore, resultSecondTime.metadata().get("score"));
         assertEquals(expectedResult, resultSecondTime.metadata().get("result"));
