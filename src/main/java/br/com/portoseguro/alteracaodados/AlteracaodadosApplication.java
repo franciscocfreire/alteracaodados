@@ -1,6 +1,6 @@
 package br.com.portoseguro.alteracaodados;
 
-import br.com.portoseguro.alteracaodados.domain.vo.StateToken;
+import br.com.portoseguro.alteracaodados.domain.vo.PersistenceToken;
 import br.com.portoseguro.alteracaodados.infrastructure.config.JwtConfig;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -21,7 +21,7 @@ public class AlteracaodadosApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args)  {
-		StateToken.setSecretKey(jwtConfig.getSecretKey());
+		PersistenceToken.setSecretKey(jwtConfig.getSecretKey());
 	}
 
 }

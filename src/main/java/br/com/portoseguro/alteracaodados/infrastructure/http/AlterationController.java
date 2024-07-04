@@ -1,6 +1,6 @@
 package br.com.portoseguro.alteracaodados.infrastructure.http;
 
-import br.com.portoseguro.alteracaodados.application.AlterationService;
+import br.com.portoseguro.alteracaodados.application.AlterationUseCase;
 import br.com.portoseguro.alteracaodados.infrastructure.gateway.UserGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +16,11 @@ import java.util.Map;
 @RequestMapping("/alteration")
 public class AlterationController {
 
-    private final AlterationService alterationService;
+    private final AlterationUseCase alterationUseCase;
 
     @Autowired
     public AlterationController(UserGateway userGateway) {
-        this.alterationService = new AlterationService(userGateway);
+        this.alterationUseCase = new AlterationUseCase(userGateway);
     }
 
     @PostMapping("/process")
@@ -29,8 +29,8 @@ public class AlterationController {
         String token = (String) request.get("token");
         Map<String, Object> metadata = (Map<String, Object>) request.get("metadata");
 
-        AlterationService.AlterationUseCaseInput input = new AlterationService.AlterationUseCaseInput(cpf, token, metadata);
-        AlterationService.AlterationUseCaseOutput output = alterationService.execute(input);
+        AlterationUseCase.AlterationUseCaseInput input = new AlterationUseCase.AlterationUseCaseInput(cpf, token, metadata);
+        AlterationUseCase.AlterationUseCaseOutput output = alterationUseCase.execute(input);
 
         Map<String, Object> response = new HashMap<>();
         response.put("state", output.state());

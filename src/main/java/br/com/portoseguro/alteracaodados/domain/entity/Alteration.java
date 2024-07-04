@@ -28,8 +28,6 @@ public class Alteration {
     }
 
     public OutputState execute(InputState inputState) {
-
-
         return switch (this.getState()) {
             case "initial" -> this.initial(inputState);
             case "facialBiometric" -> this.facialBiometric(inputState);
@@ -52,6 +50,7 @@ public class Alteration {
     }
 
     public String getToken() {
+        if (this.state.getValue().equals("changeData")) return null;
         return state.getToken().getValue();
     }
 

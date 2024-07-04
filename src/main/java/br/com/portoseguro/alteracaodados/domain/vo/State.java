@@ -4,19 +4,20 @@ import br.com.portoseguro.alteracaodados.domain.entity.Alteration;
 import br.com.portoseguro.alteracaodados.domain.exceptions.ValidationError;
 import lombok.Getter;
 
+import java.util.Date;
+
 public abstract class State {
 
     @Getter
     String value;
     Alteration alteration;
     @Getter
-    StateToken token;
-
+    PersistenceToken token;
 
     State(Alteration alteration, String value) {
         this.alteration = alteration;
         this.value = value;
-        this.token = StateToken.restoreByState(this.value);
+        this.token = PersistenceToken.restore(this.value, getNextStage(), new Date());
     }
 
     public String getNextStage() {
