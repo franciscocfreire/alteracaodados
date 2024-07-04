@@ -13,44 +13,44 @@ public class Alteration {
     private final User user;
     private State state;
 
-    private Alteration(User user, String state) {
+    private Alteration(User user, StateEnum state) {
         this.id = UUID.randomUUID();
         this.user = user;
         this.state = StateFactory.create(this, state);
     }
 
     public static Alteration create(User user) {
-        return new Alteration(user, "initial");
+        return new Alteration(user, StateEnum.INITIAL);
     }
 
-    public static Alteration restore(User user, String state) {
+    public static Alteration restore(User user, StateEnum state) {
         return new Alteration(user, state);
     }
 
     public State.OutputState execute(State.InputState inputState) {
         return switch (this.getState()) {
-            case "initial" -> this.initial(inputState);
-            case "facialBiometric" -> this.facialBiometric(inputState);
-            case "authenticator" -> this.authenticator(inputState);
-            case "changeData" -> this.changeData(inputState);
+            case INITIAL -> this.initial(inputState);
+            case FACIAL_BIOMETRIC -> this.facialBiometric(inputState);
+            case AUTHENTICATOR -> this.authenticator(inputState);
+            case CHANGE_DATA -> this.changeData(inputState);
             default -> throw new ValidationError("State is not valid", -2);
         };
     }
 
     public void goToNextStep(){
-        this.state = StateFactory.nextState(this);
+        this.state = StateFactory.create(this, this.state.getValueEnum().nextState());
     }
 
-    public String getState() {
-        return state.getValue();
+    public StateEnum getState() {
+        return StateEnum.valueOf(state.getValue());
     }
 
     public String getNextStage() {
-        return state.getNextStage();
+        return state.getValueEnum().nextState().name();
     }
 
     public String getToken() {
-        if (this.state.getValue().equals("changeData")) return null;
+        if (this.state.getValueEnum().equals(StateEnum.CHANGE_DATA)) return null;
         return state.getToken().getValue();
     }
 

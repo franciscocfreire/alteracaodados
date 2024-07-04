@@ -9,7 +9,7 @@ import java.util.Map;
 public class AuthenticatorState extends State {
 
     public AuthenticatorState(Alteration alteration) {
-        super(alteration, "authenticator");
+        super(alteration, StateEnum.AUTHENTICATOR);
     }
 
     @Override
@@ -17,7 +17,7 @@ public class AuthenticatorState extends State {
         Map<String, Object> metadata = new HashMap<>();
         metadata.put("message", "Token Verified");
         metadata.put("result", "PASSED");
-        return new OutputState(this.value, metadata);
+        return new OutputState(this.value.name(), metadata);
     }
 
     @Override

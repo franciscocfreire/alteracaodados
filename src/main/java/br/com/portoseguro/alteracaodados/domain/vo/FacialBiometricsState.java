@@ -9,7 +9,7 @@ import java.util.Map;
 public class FacialBiometricsState extends State {
 
     public FacialBiometricsState(Alteration alteration) {
-        super(alteration, "facialBiometric");
+        super(alteration, StateEnum.FACIAL_BIOMETRIC);
     }
 
     @Override
@@ -17,7 +17,7 @@ public class FacialBiometricsState extends State {
         Map<String, Object> metadata = new HashMap<>();
         metadata.put("score", "90");
         metadata.put("result", "PASSED");
-        return new OutputState(this.value, metadata);
+        return new OutputState(this.value.name(), metadata);
     }
 
     @Override

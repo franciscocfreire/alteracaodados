@@ -1,9 +1,10 @@
 package br.com.portoseguro.alteracaodados;
 
-import br.com.portoseguro.alteracaodados.domain.entity.User;
 import br.com.portoseguro.alteracaodados.application.AlterationUseCase;
+import br.com.portoseguro.alteracaodados.domain.entity.User;
 import br.com.portoseguro.alteracaodados.domain.exceptions.ValidationError;
 import br.com.portoseguro.alteracaodados.domain.vo.PersistenceToken;
+import br.com.portoseguro.alteracaodados.domain.vo.StateEnum;
 import br.com.portoseguro.alteracaodados.infrastructure.gateway.UserGateway;
 import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,11 +46,12 @@ public class AlterationTest {
         String expectedCpf = "33998291830";
         String expectedEmail = "maskemail@gmail.com";
         String expectedPhone = "maskedphone";
-        String expectedNextState = "facialBiometric";
+        String expectedNextState = StateEnum.FACIAL_BIOMETRIC.name();
+        String expectedState = StateEnum.INITIAL.name();
         AlterationUseCase.AlterationUseCaseInput alterationUseCaseInput = new AlterationUseCase.AlterationUseCaseInput(expectedCpf, null, null);
         when(userGateway.restoreByCpf(eq(expectedCpf))).thenReturn(userMock);
         var result = alterationUseCase.execute(alterationUseCaseInput);
-        assertEquals("initial", result.state());
+        assertEquals(expectedState, result.state());
         assertNotNull(result.token());
         assertEquals(expectedEmail, result.metadata().get("email"));
         assertEquals(expectedPhone, result.metadata().get("phone"));
@@ -62,6 +64,8 @@ public class AlterationTest {
         String expectedCpf = "33998291830";
         String expectedScore = "90";
         String expectedResult = "PASSED";
+        String expectedState = StateEnum.FACIAL_BIOMETRIC.name();
+
         AlterationUseCase.AlterationUseCaseInput alterationUseCaseInput = new AlterationUseCase.AlterationUseCaseInput(expectedCpf, null, null);
         when(userGateway.restoreByCpf(eq(expectedCpf))).thenReturn(userMock);
         var resultInitial = alterationUseCase.execute(alterationUseCaseInput);
@@ -69,7 +73,7 @@ public class AlterationTest {
         AlterationUseCase.AlterationUseCaseInput alterationUseCaseInputSecondTime = new AlterationUseCase.AlterationUseCaseInput(expectedCpf, resultInitial.token(), null);
         var resultSecondTime = alterationUseCase.execute(alterationUseCaseInputSecondTime);
 
-        assertEquals("facialBiometric", resultSecondTime.state());
+        assertEquals(expectedState, resultSecondTime.state());
         assertNotNull(resultSecondTime.token());
         assertEquals(expectedScore, resultSecondTime.metadata().get("score"));
         assertEquals(expectedResult, resultSecondTime.metadata().get("result"));
@@ -79,6 +83,7 @@ public class AlterationTest {
     @DisplayName("Deve retornar token nulo no ultimo estagio")
     public void deveRetornarTokenNuloUltimoEstagio() {
         String expectedCpf = "33998291830";
+        String expectedState = StateEnum.CHANGE_DATA.name();
         AlterationUseCase.AlterationUseCaseInput alterationUseCaseInput = new AlterationUseCase.AlterationUseCaseInput(expectedCpf, null, null);
         when(userGateway.restoreByCpf(eq(expectedCpf))).thenReturn(userMock);
         var resultInitial = alterationUseCase.execute(alterationUseCaseInput);
@@ -92,18 +97,16 @@ public class AlterationTest {
         AlterationUseCase.AlterationUseCaseInput alterationUseCaseInputFourthTime = new AlterationUseCase.AlterationUseCaseInput(expectedCpf, resultThirdTime.token(), null);
         var resultFourthTime = alterationUseCase.execute(alterationUseCaseInputFourthTime);
 
-        assertEquals("changeData", resultFourthTime.state());
+        assertEquals(expectedState, resultFourthTime.state());
         assertNull(resultFourthTime.token());
     }
 
     @Test
     @DisplayName("Não deve executar a operação caso o token tiver mais que 5 minutos")
     public void naoDeveExecutarOperacaoTokenMais5Minutos() {
-        String oldToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdGF0ZS10b2tlbiIsInN0YXRlIjoiYXV0aGVudGljYXRvciIsImlhdCI6MTcyMDA0MjcxNH0.ah0vMsBhljP8Up0JlVPtazSgeCy6BKMGA3iWnmmVKJ8";
+        String oldToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdGF0ZS10b2tlbiIsInN0YXRlIjoiSU5JVElBTCIsIm5leHRTdGF0ZSI6IkZBQ0lBTF9CSU9NRVRSSUMiLCJ1c2VybmFtZSI6IjMzOTk4MjkxODMwIiwiaWF0IjoxNzIwMDg3NjI5LCJleHAiOjE3MjAwODc5Mjl9.ch4V4Cudak_J_CoNfwScf7CSToY7mUastEs5h8qicSk";
         String expectedCpf = "33998291830";
         when(userGateway.restoreByCpf(eq(expectedCpf))).thenReturn(userMock);
         assertThrows(ValidationError.class, () -> alterationUseCase.execute(new AlterationUseCase.AlterationUseCaseInput(expectedCpf, oldToken, null)));
     }
-
-
 }

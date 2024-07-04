@@ -6,6 +6,7 @@ import br.com.portoseguro.alteracaodados.domain.exceptions.ValidationError;
 import br.com.portoseguro.alteracaodados.domain.vo.PersistenceToken;
 import br.com.portoseguro.alteracaodados.domain.vo.State;
 import br.com.portoseguro.alteracaodados.infrastructure.gateway.UserGateway;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,13 +37,16 @@ public class AlterationUseCase {
             } catch (SignatureException signatureException) {
                 log.error("Attempt to use an unsigned token");
                 throw new ValidationError("Token is not valid", -3);
+            } catch (ExpiredJwtException expiredJwtException){
+                log.warn("Attempt to use an expired token");
+                throw new ValidationError("Token is not valid", -4);
             }
         }
 
         State.InputState inputState = new State.InputState(null,alterationUseCaseInput.metadata);
         State.OutputState outputState = alteration.execute(inputState);
 
-        return new AlterationUseCaseOutput(alteration.getState(), alteration.getNextStage(), alteration.getToken(), outputState.metadata());
+        return new AlterationUseCaseOutput(alteration.getState().name(), alteration.getNextStage(), alteration.getToken(), outputState.metadata());
     }
 
     public record AlterationUseCaseInput(String cpf, String token, Map<String, Object> metadata) {

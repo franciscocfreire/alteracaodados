@@ -9,7 +9,7 @@ import java.util.Map;
 public class InitialState extends State {
 
     public InitialState(Alteration alteration) {
-        super(alteration, "initial");
+        super(alteration, StateEnum.INITIAL);
     }
 
     @Override
@@ -17,7 +17,7 @@ public class InitialState extends State {
         Map<String, Object> metadata = new HashMap<>();
         metadata.put("email", this.alteration.getUser().getMaskedEmail());
         metadata.put("phone", this.alteration.getUser().getMaskedPhone());
-        return new OutputState(this.value, metadata);
+        return new OutputState(this.value.name(), metadata);
     }
 
     @Override

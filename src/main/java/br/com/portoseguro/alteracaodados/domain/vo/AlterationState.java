@@ -9,7 +9,7 @@ import java.util.Map;
 public class AlterationState extends State {
 
     public AlterationState(Alteration alteration) {
-        super(alteration, "changeData");
+        super(alteration, StateEnum.CHANGE_DATA);
     }
 
     @Override
@@ -17,7 +17,7 @@ public class AlterationState extends State {
         Map<String, Object> metadata = new HashMap<>();
         metadata.put("message", "access data were change");
         metadata.put("result", "PASSED");
-        return new OutputState(this.value, metadata);
+        return new OutputState(this.value.name(), metadata);
     }
 
     @Override

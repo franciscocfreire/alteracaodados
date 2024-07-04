@@ -1,7 +1,6 @@
 package br.com.portoseguro.alteracaodados.domain.vo;
 
 import br.com.portoseguro.alteracaodados.domain.entity.Alteration;
-import br.com.portoseguro.alteracaodados.domain.exceptions.ValidationError;
 import lombok.Getter;
 
 import java.util.Date;
@@ -9,33 +8,38 @@ import java.util.Map;
 
 public abstract class State {
 
-    @Getter
-    String value;
+
+    StateEnum value;
     Alteration alteration;
     @Getter
     PersistenceToken token;
 
-    State(Alteration alteration, String value) {
+    State(Alteration alteration, StateEnum value) {
         this.alteration = alteration;
         this.value = value;
-        this.token = PersistenceToken.restore(alteration.getUser().getCpf(),this.value, getNextStage(), new Date());
+        this.token = PersistenceToken.restore(alteration.getUser().getCpf(), this.value.name(), this.value.nextState().name(), new Date());
     }
 
-    public String getNextStage() {
-        return switch (value) {
-            case "initial" -> "facialBiometric";
-            case "facialBiometric" -> "authenticator";
-            case "authenticator" -> "changeData";
-            case "changeData" -> null;
-            default -> throw new ValidationError("State is not valid", -2);
-        };
+
+    public String getValue() {
+        return this.value.name();
+    }
+
+    public StateEnum getValueEnum() {
+        return this.value;
     }
 
     public abstract OutputState initial(InputState inputState);
+
     public abstract OutputState facialBiometric(InputState inputState);
+
     public abstract OutputState authenticator(InputState inputState);
+
     public abstract OutputState changeData(InputState inputState);
 
-    public record InputState(String token, Map<String, Object> metadata){}
-    public record OutputState(String state, Map<String, Object> metadata){}
+    public record InputState(String token, Map<String, Object> metadata) {
+    }
+
+    public record OutputState(String state, Map<String, Object> metadata) {
+    }
 }

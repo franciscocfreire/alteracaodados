@@ -14,8 +14,8 @@ public class PersistenceToken {
     private static SecretKey SECRET_KEY;
     private final Claims claims;
     private final String subject = "state-token";
-    private final String state;
-    private final String nextState;
+    private final StateEnum  state;
+    private final StateEnum nextState;
     private final Date issuedAt;
     private final Date expiration;
     private final String username;
@@ -24,7 +24,7 @@ public class PersistenceToken {
         SECRET_KEY = secretKey;
     }
 
-    private PersistenceToken(String username, String state, String nextState, Date date, Date expiration) {
+    private PersistenceToken(String username, StateEnum  state, StateEnum nextState, Date date, Date expiration) {
         this.issuedAt = date;
         this.expiration = expiration;
         this.state = state;
@@ -54,20 +54,20 @@ public class PersistenceToken {
         }
     }
 
-    public String getCurrentState() {
+    public StateEnum getCurrentState() {
         return state;
     }
 
     public static PersistenceToken restore(String cpf, String state, String nextState, Date date) {
         long expMillis = date.getTime() + 5 * 60 * 1000;
         Date expiration = new Date(expMillis);
-        return new PersistenceToken(cpf, state, nextState, date, expiration);
+        return new PersistenceToken(cpf, StateEnum.valueOf(state), StateEnum.valueOf(nextState), date, expiration);
     }
 
     public static PersistenceToken restoreByToken(String token) {
         Claims claims = Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token).getBody();
-        String state = claims.get("state", String.class);
-        String nextState = claims.get("nextState", String.class);
+        StateEnum state = StateEnum.valueOf(claims.get("state", String.class));
+        StateEnum nextState = StateEnum.valueOf(claims.get("nextState", String.class));
         String cpf = claims.get("username", String.class);
         return new PersistenceToken(cpf, state, nextState, claims.getIssuedAt(), claims.getExpiration());
     }
