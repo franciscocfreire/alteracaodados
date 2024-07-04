@@ -1,31 +1,30 @@
-package br.com.portoseguro.alteracaodados.application;
+package br.com.portoseguro.alteracaodados.domain.vo;
 
 import br.com.portoseguro.alteracaodados.domain.entity.Alteration;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class InitialState extends State {
+public class FacialBiometricsState extends State {
 
-
-    public InitialState(Alteration alteration) {
-        super(alteration, "initial");
+    public FacialBiometricsState(Alteration alteration) {
+        super(alteration, "facialBiometric");
     }
 
     @Override
     public OutputState initial(InputState inputState) {
-        Map<String, Object> metadata = new HashMap<>();
-        metadata.put("email", this.alteration.getUser().getMaskedEmail());
-        metadata.put("phone", this.alteration.getUser().getMaskedPhone());
-        OutputState outputState = new OutputState();
-        outputState.setState(this.value);
-        outputState.setMetadata(metadata);
-        return outputState;
+        return null;
     }
 
     @Override
     public OutputState facialBiometric(InputState inputState) {
-        return null;
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("score", "90");
+        metadata.put("result", "PASSED");
+        OutputState outputState = new OutputState();
+        outputState.setState(this.value);
+        outputState.setMetadata(metadata);
+        return outputState;
     }
 
     @Override
@@ -37,6 +36,4 @@ public class InitialState extends State {
     public OutputState changeData(InputState inputState) {
         return null;
     }
-
-
 }

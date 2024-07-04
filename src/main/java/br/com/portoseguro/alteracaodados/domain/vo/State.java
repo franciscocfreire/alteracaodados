@@ -1,8 +1,7 @@
-package br.com.portoseguro.alteracaodados.application;
+package br.com.portoseguro.alteracaodados.domain.vo;
 
 import br.com.portoseguro.alteracaodados.domain.entity.Alteration;
 import br.com.portoseguro.alteracaodados.domain.exceptions.ValidationError;
-import br.com.portoseguro.alteracaodados.domain.vo.StateToken;
 import lombok.Getter;
 
 public abstract class State {

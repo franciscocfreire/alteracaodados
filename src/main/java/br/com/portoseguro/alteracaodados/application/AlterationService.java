@@ -1,7 +1,7 @@
-package br.com.portoseguro.alteracaodados.domain.service;
+package br.com.portoseguro.alteracaodados.application;
 
-import br.com.portoseguro.alteracaodados.application.InputState;
-import br.com.portoseguro.alteracaodados.application.OutputState;
+import br.com.portoseguro.alteracaodados.domain.vo.InputState;
+import br.com.portoseguro.alteracaodados.domain.vo.OutputState;
 import br.com.portoseguro.alteracaodados.domain.entity.Alteration;
 import br.com.portoseguro.alteracaodados.domain.entity.User;
 import br.com.portoseguro.alteracaodados.domain.vo.StateToken;
@@ -19,7 +19,7 @@ public class AlterationService {
 
     public AlterationUseCaseOutput execute(AlterationUseCaseInput alterationUseCaseInput) {
 
-        User user = userGateway.restore(alterationUseCaseInput.cpf);
+        User user = userGateway.restoreByCpf(alterationUseCaseInput.cpf);
         StateToken stateToken;
         Alteration alteration;
 

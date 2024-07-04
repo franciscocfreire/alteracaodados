@@ -1,4 +1,4 @@
-package br.com.portoseguro.alteracaodados.application;
+package br.com.portoseguro.alteracaodados.domain.vo;
 
 import lombok.Data;
 

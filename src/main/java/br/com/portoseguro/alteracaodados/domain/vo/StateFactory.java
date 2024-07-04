@@ -1,6 +1,5 @@
 package br.com.portoseguro.alteracaodados.domain.vo;
 
-import br.com.portoseguro.alteracaodados.application.*;
 import br.com.portoseguro.alteracaodados.domain.entity.Alteration;
 
 public class StateFactory {

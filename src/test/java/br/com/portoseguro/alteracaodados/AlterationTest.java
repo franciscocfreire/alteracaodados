@@ -1,7 +1,7 @@
 package br.com.portoseguro.alteracaodados;
 
 import br.com.portoseguro.alteracaodados.domain.entity.User;
-import br.com.portoseguro.alteracaodados.domain.service.AlterationService;
+import br.com.portoseguro.alteracaodados.application.AlterationService;
 import br.com.portoseguro.alteracaodados.domain.vo.StateToken;
 import br.com.portoseguro.alteracaodados.infrastructure.gateway.UserGateway;
 import io.jsonwebtoken.security.Keys;
@@ -47,7 +47,7 @@ public class AlterationTest {
         String expectedPhone = "maskedphone";
         String expectedNextState = "facialBiometric";
         AlterationService.AlterationUseCaseInput alterationUseCaseInput = new AlterationService.AlterationUseCaseInput(expectedCpf, null, null);
-        when(userGateway.restore(eq(expectedCpf))).thenReturn(userMock);
+        when(userGateway.restoreByCpf(eq(expectedCpf))).thenReturn(userMock);
         var result = alterationService.execute(alterationUseCaseInput);
         assertEquals("initial", result.state());
         assertNotNull(result.token());
@@ -63,7 +63,7 @@ public class AlterationTest {
         String expectedScore = "90";
         String expectedResult = "PASSED";
         AlterationService.AlterationUseCaseInput alterationUseCaseInput = new AlterationService.AlterationUseCaseInput(expectedCpf, null, null);
-        when(userGateway.restore(eq(expectedCpf))).thenReturn(userMock);
+        when(userGateway.restoreByCpf(eq(expectedCpf))).thenReturn(userMock);
         var resultInitial = alterationService.execute(alterationUseCaseInput);
 
         AlterationService.AlterationUseCaseInput alterationUseCaseInputSecondTime = new AlterationService.AlterationUseCaseInput(expectedCpf, resultInitial.token(), null);

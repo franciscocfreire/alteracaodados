@@ -4,5 +4,5 @@ import br.com.portoseguro.alteracaodados.domain.entity.User;
 
 public interface UserGateway {
 
-    User restore(String cpf);
+    User restoreByCpf(String cpf);
 }

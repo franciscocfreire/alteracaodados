@@ -1,17 +1,20 @@
 package br.com.portoseguro.alteracaodados.domain.entity;
 
-import br.com.portoseguro.alteracaodados.application.*;
 import br.com.portoseguro.alteracaodados.domain.exceptions.ValidationError;
-import br.com.portoseguro.alteracaodados.domain.vo.StateFactory;
+import br.com.portoseguro.alteracaodados.domain.vo.*;
 
 import lombok.Getter;
 
+import java.util.UUID;
+
 @Getter
 public class Alteration {
+    private final UUID id;
     private final User user;
     private State state;
 
     private Alteration(User user, String state) {
+        this.id = UUID.randomUUID();
         this.user = user;
         this.state = StateFactory.create(this, state);
     }

@@ -1,6 +1,6 @@
 package br.com.portoseguro.alteracaodados.infrastructure.http;
 
-import br.com.portoseguro.alteracaodados.domain.service.AlterationService;
+import br.com.portoseguro.alteracaodados.application.AlterationService;
 import br.com.portoseguro.alteracaodados.infrastructure.gateway.UserGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
