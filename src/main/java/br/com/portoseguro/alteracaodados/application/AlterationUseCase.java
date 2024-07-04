@@ -1,14 +1,18 @@
 package br.com.portoseguro.alteracaodados.application;
 
-import br.com.portoseguro.alteracaodados.domain.vo.InputState;
-import br.com.portoseguro.alteracaodados.domain.vo.OutputState;
 import br.com.portoseguro.alteracaodados.domain.entity.Alteration;
 import br.com.portoseguro.alteracaodados.domain.entity.User;
+import br.com.portoseguro.alteracaodados.domain.exceptions.ValidationError;
+import br.com.portoseguro.alteracaodados.domain.vo.InputState;
+import br.com.portoseguro.alteracaodados.domain.vo.OutputState;
 import br.com.portoseguro.alteracaodados.domain.vo.PersistenceToken;
 import br.com.portoseguro.alteracaodados.infrastructure.gateway.UserGateway;
+import io.jsonwebtoken.security.SignatureException;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
+@Slf4j
 public class AlterationUseCase {
 
     private final UserGateway userGateway;
@@ -26,9 +30,14 @@ public class AlterationUseCase {
         if (alterationUseCaseInput.token == null) {
             alteration = Alteration.create(user);
         } else {
-            persistenceToken = PersistenceToken.restoreByToken(alterationUseCaseInput.token);
-            alteration = Alteration.restore(user, persistenceToken.getCurrentState());
-            alteration.goToNextStep();
+            try {
+                persistenceToken = PersistenceToken.restoreByToken(alterationUseCaseInput.token);
+                alteration = Alteration.restore(user, persistenceToken.getCurrentState());
+                alteration.goToNextStep();
+            } catch (SignatureException signatureException) {
+                log.error("Attempt to use an unsigned token");
+                throw new ValidationError("Token is not valid", -3);
+            }
         }
 
         InputState inputState = new InputState();
