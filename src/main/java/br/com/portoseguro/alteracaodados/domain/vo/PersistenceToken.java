@@ -18,15 +18,18 @@ public class PersistenceToken {
     private final String state;
     private final String nextState;
     private final Date issuedAt;
+    private final Date expiration;
 
     public static void setSecretKey(SecretKey secretKey) {
         SECRET_KEY = secretKey;
     }
 
-    private PersistenceToken(String state, String nextState, Date date) {
+    private PersistenceToken(String state, String nextState, Date date, Date expiration) {
         this.issuedAt = date;
+        this.expiration = expiration;
         this.state = state;
         this.nextState = nextState;
+
         Claims claims = new DefaultClaims();
         claims.put("state", state);
         claims.put("nextState", nextState);
@@ -40,8 +43,9 @@ public class PersistenceToken {
 
     public static boolean isValid(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token);
-            return true;
+            Claims claims = Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token).getBody();
+            Date expiration = claims.getExpiration();
+            return expiration.after(claims.getIssuedAt());
         } catch (Exception e) {
             return false;
         }
@@ -52,14 +56,16 @@ public class PersistenceToken {
     }
 
     public static PersistenceToken restore(String state, String nextState, Date date) {
-        return new PersistenceToken(state, nextState, date);
+        long expMillis = date.getTime() + 5 * 60 * 1000;
+        Date expiration = new Date(expMillis);
+        return new PersistenceToken(state, nextState, date, expiration);
     }
 
     public static PersistenceToken restoreByToken(String token) {
         Claims claims = Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token).getBody();
         String state = claims.get("state", String.class);
         String nextState = claims.get("nextState", String.class);
-        return new PersistenceToken(state, nextState, claims.getIssuedAt());
+        return new PersistenceToken(state, nextState, claims.getIssuedAt(), claims.getExpiration());
     }
 
     private String generateToken() {
@@ -67,6 +73,7 @@ public class PersistenceToken {
                 .setSubject(this.subject)
                 .addClaims(this.claims)
                 .setIssuedAt(this.issuedAt)
+                .setExpiration(this.expiration)
                 .signWith(SECRET_KEY)
                 .compact();
     }

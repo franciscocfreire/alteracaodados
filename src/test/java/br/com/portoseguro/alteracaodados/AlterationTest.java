@@ -2,6 +2,7 @@ package br.com.portoseguro.alteracaodados;
 
 import br.com.portoseguro.alteracaodados.domain.entity.User;
 import br.com.portoseguro.alteracaodados.application.AlterationUseCase;
+import br.com.portoseguro.alteracaodados.domain.exceptions.ValidationError;
 import br.com.portoseguro.alteracaodados.domain.vo.PersistenceToken;
 import br.com.portoseguro.alteracaodados.infrastructure.gateway.UserGateway;
 import io.jsonwebtoken.security.Keys;
@@ -93,6 +94,15 @@ public class AlterationTest {
 
         assertEquals("changeData", resultFourthTime.state());
         assertNull(resultFourthTime.token());
+    }
+
+    @Test
+    @DisplayName("Não deve executar a operação caso o token tiver mais que 5 minutos")
+    public void naoDeveExecutarOperacaoTokenMais5Minutos() {
+        String oldToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdGF0ZS10b2tlbiIsInN0YXRlIjoiYXV0aGVudGljYXRvciIsImlhdCI6MTcyMDA0MjcxNH0.ah0vMsBhljP8Up0JlVPtazSgeCy6BKMGA3iWnmmVKJ8";
+        String expectedCpf = "33998291830";
+        when(userGateway.restoreByCpf(eq(expectedCpf))).thenReturn(userMock);
+        assertThrows(ValidationError.class, () -> alterationUseCase.execute(new AlterationUseCase.AlterationUseCaseInput(expectedCpf, oldToken, null)));
     }
 
 
