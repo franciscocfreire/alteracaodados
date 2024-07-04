@@ -1,13 +1,18 @@
 package br.com.portoseguro.alteracaodados.domain.entity;
 
+import br.com.portoseguro.alteracaodados.application.*;
 import br.com.portoseguro.alteracaodados.domain.exceptions.ValidationError;
 import br.com.portoseguro.alteracaodados.domain.vo.*;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.UUID;
 
 @Getter
+@Slf4j
 public class Alteration {
     private final UUID id;
     private final User user;
@@ -21,6 +26,23 @@ public class Alteration {
 
     public static Alteration create(User user) {
         return new Alteration(user, StateEnum.INITIAL);
+    }
+
+    public static Alteration createOrRestore(User user, String token) {
+
+        if(token == null) return create(user);
+        try {
+            PersistenceToken persistenceToken = PersistenceToken.restoreByToken(token);
+            Alteration alteration = Alteration.restore(user, persistenceToken.getCurrentState());
+            alteration.goToNextStep();
+            return alteration;
+        } catch (SignatureException signatureException) {
+            log.error("Attempt to use an unsigned token");
+            throw new ValidationError("Token is not valid", -3);
+        } catch (ExpiredJwtException expiredJwtException){
+            log.warn("Attempt to use an expired token");
+            throw new ValidationError("Token is not valid", -4);
+        }
     }
 
     public static Alteration restore(User user, StateEnum state) {
@@ -67,6 +89,6 @@ public class Alteration {
     }
 
     public State.OutputState changeData(State.InputState initialState) {
-        return new AlterationState(this).changeData(initialState);
+        return new ChangeAccessDataState(this).changeData(initialState);
     }
 }

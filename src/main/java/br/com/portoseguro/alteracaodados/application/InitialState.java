@@ -1,7 +1,9 @@
-package br.com.portoseguro.alteracaodados.domain.vo;
+package br.com.portoseguro.alteracaodados.application;
 
 import br.com.portoseguro.alteracaodados.domain.entity.Alteration;
 import br.com.portoseguro.alteracaodados.domain.exceptions.ValidationError;
+import br.com.portoseguro.alteracaodados.domain.vo.State;
+import br.com.portoseguro.alteracaodados.domain.vo.StateEnum;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,9 +17,9 @@ public class InitialState extends State {
     @Override
     public OutputState initial(InputState inputState) {
         Map<String, Object> metadata = new HashMap<>();
-        metadata.put("email", this.alteration.getUser().getMaskedEmail());
-        metadata.put("phone", this.alteration.getUser().getMaskedPhone());
-        return new OutputState(this.value.name(), metadata);
+        metadata.put("email", this.getAlteration().getUser().getMaskedEmail());
+        metadata.put("phone", this.getAlteration().getUser().getMaskedPhone());
+        return new OutputState(this.getValueEnum().name(), metadata);
     }
 
     @Override

@@ -1,14 +1,16 @@
-package br.com.portoseguro.alteracaodados.domain.vo;
+package br.com.portoseguro.alteracaodados.application;
 
 import br.com.portoseguro.alteracaodados.domain.entity.Alteration;
 import br.com.portoseguro.alteracaodados.domain.exceptions.ValidationError;
+import br.com.portoseguro.alteracaodados.domain.vo.State;
+import br.com.portoseguro.alteracaodados.domain.vo.StateEnum;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class AlterationState extends State {
+public class ChangeAccessDataState extends State {
 
-    public AlterationState(Alteration alteration) {
+    public ChangeAccessDataState(Alteration alteration) {
         super(alteration, StateEnum.CHANGE_DATA);
     }
 
@@ -17,7 +19,7 @@ public class AlterationState extends State {
         Map<String, Object> metadata = new HashMap<>();
         metadata.put("message", "access data were change");
         metadata.put("result", "PASSED");
-        return new OutputState(this.value.name(), metadata);
+        return new OutputState(this.getValueEnum().name(), metadata);
     }
 
     @Override

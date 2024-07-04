@@ -10,11 +10,12 @@ public abstract class State {
 
 
     StateEnum value;
+    @Getter
     Alteration alteration;
     @Getter
     PersistenceToken token;
 
-    State(Alteration alteration, StateEnum value) {
+    public State(Alteration alteration, StateEnum value) {
         this.alteration = alteration;
         this.value = value;
         this.token = PersistenceToken.restore(alteration.getUser().getCpf(), this.value.name(), this.value.nextState().name(), new Date());
